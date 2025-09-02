@@ -1,6 +1,8 @@
 #ifndef _LIBMKDIR_H_
 #define _LIBMKDIR_H_
 
+#include <stdio.h>
+
 #ifdef __unix__
 #include <sys/stat.h>
 #include <unistd.h>
@@ -49,8 +51,14 @@ static int havedir(const char *__restrict name) {
   }
   return 1;
 #endif
-
   return 0;
+}
+
+static int renamedir(const char *__restrict old_name,
+                     const char *__restrict new_name) {
+  if (!old_name || !new_name)
+    return -2;
+  return rename(old_name, new_name);
 }
 
 #endif

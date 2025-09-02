@@ -1,17 +1,17 @@
 #include "libmkdir.h"
 #include <stdio.h>
 
-#define BENCHMARK_NAME "mydir"
+#define _NAME "mydir"
 
 int main() {
-  if (!havedir(BENCHMARK_NAME)) {
-    if (!makedir(BENCHMARK_NAME, 0)) {
+  if (!havedir(_NAME)) {
+    if (!makedir(_NAME)) {
       printf("folder created.\n");
     }
   }
-  if (havedir(BENCHMARK_NAME)) {
+  if (havedir(_NAME)) {
     printf("deleting dir...\n");
-    if (!removedir(BENCHMARK_NAME))
+    if (!removedir(_NAME))
       printf("deleted dir.\n");
   }
 }
