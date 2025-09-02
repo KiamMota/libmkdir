@@ -63,6 +63,10 @@ static int renamedir(const char *__restrict old_name,
   return syscall(SYS_rename, old_name, new_name);
 #endif
 #ifdef __WIN32
+  return rename(old_name, new_name);
+#endif
+#ifdef __unix__
+  return rename(old_name, new_name);
 
 #endif
 }
