@@ -1,0 +1,8 @@
+[
+{
+  "directory": "/home/kmt/Documentos/libmkdir/build",
+  "command": "/usr/bin/cc  -I/home/kmt/Documentos/libmkdir/include  -o CMakeFiles/test.dir/test/main.c.o -c /home/kmt/Documentos/libmkdir/test/main.c",
+  "file": "/home/kmt/Documentos/libmkdir/test/main.c",
+  "output": "CMakeFiles/test.dir/test/main.c.o"
+}
+]
