@@ -26,3 +26,9 @@ removes an empty directory, returns -2 if the name pointer is invalid. Success o
 static int dir_move(const char*__restrict old_name, const char*__restrict new_name);
 ```
 function capable of both renaming and moving a directory. Returns 0 if successful.
+
+``` c
+static char* dir_getcurrent();
+```
+
+returns the absolute path of the default directory.
