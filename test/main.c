@@ -1,3 +1,4 @@
+#include "internal/base.h"
 #include "libmkdir.h"
 #include <stdio.h>
 
@@ -11,7 +12,10 @@ int main() {
   }
   if (dir_exists(_NAME)) {
     printf("deleting dir...\n");
-    if (!dir_remove(_NAME))
+    if (!dir_del(_NAME))
       printf("deleted dir.\n");
+    else {
+      printf("houve algum erro ao deletar.\n");
+    }
   }
 }
