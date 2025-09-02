@@ -7,8 +7,8 @@
 #endif
 
 #ifdef _WIN32
-
 #include <direct.h>
+#include <windows.h>
 
 #endif
 
@@ -40,6 +40,14 @@ static int havedir(const char *__restrict name) {
   if (stat(name, &st) == 0 && S_ISDIR(st.st_mode)) {
     return 1;
   }
+#endif
+#ifdef _WIN32
+
+  DWORD attr = GetFileAttributesA(name);
+  if (attr == INVALID_FILE_ATTRIBUTES) {
+    return 0;
+  }
+  return 1;
 #endif
 
   return 0;
