@@ -47,10 +47,10 @@ static int havedir(const char *__restrict name) {
 #ifdef _WIN32
 
   DWORD attr = GetFileAttributesA(name);
-  if (attr == INVALID_FILE_ATTRIBUTES) {
-    return 0;
+  if (attr != INVALID_FILE_ATTRIBUTES) {
+    return 1;
   }
-  return 1;
+  return 0;
 #endif
   return 0;
 }
