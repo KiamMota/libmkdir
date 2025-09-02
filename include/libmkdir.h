@@ -5,6 +5,7 @@
 
 #ifdef __unix__
 #include <sys/stat.h>
+#include <sys/syscall.h>
 #include <unistd.h>
 #endif
 
@@ -58,7 +59,12 @@ static int renamedir(const char *__restrict old_name,
                      const char *__restrict new_name) {
   if (!old_name || !new_name)
     return -2;
-  return rename(old_name, new_name);
+#ifdef __linux__
+  return syscall(SYS_rename, old_name, new_name);
+#endif
+#ifdef __WIN32
+
+#endif
 }
 
 #endif
