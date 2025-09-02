@@ -32,3 +32,9 @@ static char* dir_getcurrent();
 ```
 
 returns the absolute path of the default directory.
+
+``` c
+static int dir_setcurrent(const char*__restrict name);
+```
+
+sets the current directory of the process, returns 0 if successful.
