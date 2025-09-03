@@ -1,7 +1,7 @@
 #ifdef __unix__
 
-#ifndef _LINMKDIR_H_
-#define _LINMKDIR_H_
+#ifndef _UNIMKDIR_H_
+#define _UNIMKDIR_H_
 
 #include "base.h"
 #include <dirent.h>
