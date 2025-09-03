@@ -5,18 +5,13 @@
 #define _LINMKDIR_H_
 
 #include "base.h"
+#include <dirent.h>
 #include <stdio.h>
 #include <sys/stat.h>
 #include <unistd.h>
 
 #include <errno.h>
 int dir_make(const char *restrict name) {
-  // int len = strlen(name);
-  // char _path[len + 1];
-  // strcpy(_path, name);
-  // if (!strcmp(&_path[len - 1], "/")) {
-  //   memmove(&_path[len - 1], &_path[len + 1], len - 1);
-  // }
 
   if (mkdir(name, 0755)) {
     if (errno == EEXIST)
@@ -66,6 +61,17 @@ int dir_setcurrent(const char *restrict name) { return chdir(name); }
 
 int dir_del(const char *restrict name) { return rmdir(name); }
 
+int dir_recdel(const char *restrict name) {
+  struct dirent *dr;
+  DIR *dir = opendir(name);
+  while ((dr = readdir(dir)) != NULL) {
+    if (strcmp(dr->d_name, ".") != 0 && strcmp(dr->d_name, "..") != 0) {
+      if (dr->d_type == DT_DIR) {
+      }
+    }
+  }
+}
+
 int dir_move(const char *restrict name, const char *restrict path) {
   return rename(name, path);
 }
@@ -74,6 +80,16 @@ int dir_exists(const char *restrict name) {
   struct stat info;
   if (stat(name, &info) != 0)
     return 0;
+  return 1;
+}
+
+int dir_isempty(const char *restrict name) {
+  struct dirent *dr;
+  DIR *curdir = opendir(name);
+  while ((dr = readdir(curdir)) != NULL) {
+    if (strcmp(dr->d_name, ".") != 0 && strcmp(dr->d_name, "..") != 0)
+      return 0;
+  }
   return 1;
 }
 
