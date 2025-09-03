@@ -8,7 +8,13 @@
 static int dir_make(const char*__restrict name);
 ```
 
-Creates a directory. Returns -2 if the name pointer is null; returns 0 if successful; any other value indicates an error during creation.
+Creates a directory. Returns 0 if successful.
+
+``` c
+static int dir_recmake(const char*__restrict name);
+```
+
+Creates directory recursively, returns 0 on success.
 
 ``` c
 static int dir_exists(const char*__restrict name);
