@@ -12,8 +12,6 @@
 int dir_make(const char *restrict name) {
 
   if (mkdir(name, 0755)) {
-    if (errno == EEXIST)
-      return 0;
     return -1;
   }
   return 0;
