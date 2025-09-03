@@ -1,4 +1,3 @@
-#include <string.h>
 #ifdef __unix__
 
 #ifndef _LINMKDIR_H_
@@ -6,7 +5,6 @@
 
 #include "base.h"
 #include <dirent.h>
-#include <stdio.h>
 #include <sys/stat.h>
 #include <unistd.h>
 
@@ -21,7 +19,7 @@ int dir_make(const char *restrict name) {
   return 0;
 }
 
-char *dir_getcurrent() {
+char *dir_getcurrent(void) {
   char *_current_dir = getcwd(NULL, 0);
   if (!_current_dir)
     return "noone";
@@ -42,7 +40,6 @@ int dir_recmake(const char *name) {
     if (*p == '/') {
       *p = '\0';
       if (mkdir(path, 0755) != 0 && errno != EEXIST) {
-        perror(path);
         return -1;
       }
       *p = '/';
@@ -50,7 +47,6 @@ int dir_recmake(const char *name) {
   }
 
   if (mkdir(path, 0755) != 0 && errno != EEXIST) {
-    perror(path);
     return -1;
   }
 
@@ -62,7 +58,7 @@ int dir_setcurrent(const char *restrict name) { return chdir(name); }
 int dir_del(const char *restrict name) { return rmdir(name); }
 
 int dir_recdel(const char *restrict name) {
-  char fullpath[1024];
+  char fullpath[strlen(name)];
   struct dirent *dr;
   struct stat st;
   DIR *dir = opendir(name);
@@ -72,7 +68,6 @@ int dir_recdel(const char *restrict name) {
   while ((dr = readdir(dir)) != NULL) {
     if (strcmp(dr->d_name, ".") != 0 && strcmp(dr->d_name, "..") != 0) {
       snprintf(fullpath, sizeof(fullpath), "%s/%s", name, dr->d_name);
-      printf("path -> %s\n", fullpath);
       if (stat(fullpath, &st) == 0) {
         if (S_ISDIR(st.st_mode)) {
           dir_recdel(fullpath);
@@ -83,6 +78,9 @@ int dir_recdel(const char *restrict name) {
       }
     }
   }
+
+  closedir(dir);
+  return dir_del(name);
 }
 
 int dir_move(const char *restrict name, const char *restrict path) {
