@@ -5,5 +5,6 @@ add_executable(main test/main.c)
 add_executable(rename test/rename.c)
 add_executable(recursive test/recursive.c)
 add_executable(current test/current.c)
+add_executable(firetest test/firetest.c)
 
 include_directories(include)
