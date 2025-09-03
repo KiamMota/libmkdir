@@ -56,7 +56,7 @@ int dir_setcurrent(const char *restrict name) { return chdir(name); }
 int dir_del(const char *restrict name) { return rmdir(name); }
 
 int dir_recdel(const char *restrict name) {
-  char fullpath[strlen(name)];
+  char fullpath[sizeof(size_t)];
   struct dirent *dr;
   struct stat st;
   DIR *dir = opendir(name);
