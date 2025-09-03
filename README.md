@@ -23,9 +23,15 @@
 ---
 
 > ``` c
-> static int dir_remove(const char*__restrict name);
+> static int dir_del(const char*__restrict name);
 > ```
 > Removes an empty directory, returns -2 if the name pointer is invalid. Success only if 0 is returned
+---
+
+> ``` c
+> static int dir_recdel(const char*__restrict name);
+> ```
+> removes a directory recursively, returns 0 on success.
 ---
 
 > ``` c
