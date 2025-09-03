@@ -4,14 +4,14 @@
 #define _NAME "mydir"
 
 int main() {
-  if (!havedir(_NAME)) {
-    if (!makedir(_NAME)) {
+  if (!dir_exists(_NAME)) {
+    if (!dir_make(_NAME)) {
       printf("folder created.\n");
     }
   }
-  if (havedir(_NAME)) {
+  if (dir_exists(_NAME)) {
     printf("deleting dir...\n");
-    if (!removedir(_NAME))
+    if (!dir_remove(_NAME))
       printf("deleted dir.\n");
   }
 }
