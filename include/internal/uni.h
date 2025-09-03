@@ -62,11 +62,24 @@ int dir_setcurrent(const char *restrict name) { return chdir(name); }
 int dir_del(const char *restrict name) { return rmdir(name); }
 
 int dir_recdel(const char *restrict name) {
+  char fullpath[1024];
   struct dirent *dr;
+  struct stat st;
   DIR *dir = opendir(name);
+  if (!dir)
+    return -1;
+
   while ((dr = readdir(dir)) != NULL) {
     if (strcmp(dr->d_name, ".") != 0 && strcmp(dr->d_name, "..") != 0) {
-      if (dr->d_type == DT_DIR) {
+      snprintf(fullpath, sizeof(fullpath), "%s/%s", name, dr->d_name);
+      printf("path -> %s\n", fullpath);
+      if (stat(fullpath, &st) == 0) {
+        if (S_ISDIR(st.st_mode)) {
+          dir_recdel(fullpath);
+          dir_del(fullpath);
+        } else {
+          remove(fullpath);
+        }
       }
     }
   }
