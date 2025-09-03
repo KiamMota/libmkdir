@@ -5,7 +5,7 @@ void create() {
   dir_make("myfamily");
   if (!dir_recmake("myfamily/mywife"))
     printf("created sub1\n");
-  if (!dir_recmake("mydear/myson"))
+  if (!dir_recmake("myfamily/myson"))
     printf("created sub2\n");
 }
 
@@ -24,5 +24,5 @@ int main() {
   create();
   create_files();
   printf("----- REMOVE RECURS --- \n");
-  dir_recdel("mydear");
+  dir_recdel("myfamily");
 }
