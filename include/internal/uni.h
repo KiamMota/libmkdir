@@ -89,8 +89,8 @@ int dir_move(const char *restrict name, const char *restrict path) {
 }
 
 int dir_exists(const char *restrict name) {
-  struct stat info;
-  if (stat(name, &info) != 0)
+  struct stat exists;
+  if (stat(name, &exists) != 0)
     return 0;
   return 1;
 }
