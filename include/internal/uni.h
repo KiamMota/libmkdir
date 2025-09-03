@@ -101,6 +101,7 @@ int dir_isempty(const char *restrict name) {
     if (strcmp(dr->d_name, ".") != 0 && strcmp(dr->d_name, "..") != 0)
       return 0;
   }
+  closedir(curdir);
   return 1;
 }
 
