@@ -26,13 +26,15 @@ char *dir_getcurrent(void) {
 }
 
 int dir_recmake(const char *name) {
-  char path[1024];
-  char *p;
-
   if (!name || !*name)
     return -1;
+  if (strlen(name) <= 0)
+    return -1;
 
-  strncpy(path, name, sizeof(path) - 1);
+  char path[strlen(name) + 1];
+  char *p;
+
+  strcpy(path, name);
   path[sizeof(path) - 1] = '\0';
 
   for (p = path + 1; *p; p++) {
