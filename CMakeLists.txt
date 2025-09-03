@@ -8,4 +8,4 @@ add_executable(current test/current.c)
 add_executable(firetest test/firetest.c)
 add_executable(rmrec test/rmrec.c)
 
-include_directories(include)
+include_directories(libmkdir)

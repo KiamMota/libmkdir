@@ -11,10 +11,8 @@ int main() {
   printf("[INFO] Current directory: %s\n", current);
 
   // 2. Create a new directory
-  if (dir_make("test_dir") == 0) {
-    printf("[INFO] Directory 'test_dir' created.\n");
-  } else {
-    printf("[ERROR] Failed to create 'test_dir'.\n");
+  if (dir_exists("test_dir")) {
+    dir_recdel("test_dir");
   }
 
   // 3. Check if directory exists
@@ -54,13 +52,13 @@ int main() {
   }
 
   // 8. Remove directories
-  if (dir_del("renamed_dir") == 0) {
+  if (dir_recdel("renamed_dir") == 0) {
     printf("[INFO] 'renamed_dir' removed.\n");
   } else {
     printf("[ERROR] Failed to remove 'renamed_dir'.\n");
   }
 
-  if (dir_del("nested") == 0) {
+  if (dir_recdel("nested") == 0) {
     printf("[INFO] 'nested' directory removed.\n");
   } else {
     printf("[WARN] 'nested' not fully removed (non-empty or missing).\n");
