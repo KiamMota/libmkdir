@@ -23,6 +23,11 @@
 ---
 
 > ``` c
+> static int dir_isempty(const char*__restrict name);
+> ```
+> Checks whether a directory is empty or not, returning 1 or 0 respectively.
+
+> ``` c
 > static int dir_del(const char*__restrict name);
 > ```
 > Removes an empty directory, returns -2 if the name pointer is invalid. Success only if 0 is returned
