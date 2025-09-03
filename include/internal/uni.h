@@ -1,3 +1,4 @@
+#include <string.h>
 #ifdef __unix__
 
 #ifndef _UNIMKDIR_H_
@@ -56,7 +57,9 @@ int dir_setcurrent(const char *restrict name) { return chdir(name); }
 int dir_del(const char *restrict name) { return rmdir(name); }
 
 int dir_recdel(const char *restrict name) {
-  char fullpath[sizeof(size_t)];
+  if (strlen(name) <= 0)
+    return -1;
+  char fullpath[strlen(name) + 1];
   struct dirent *dr;
   struct stat st;
   DIR *dir = opendir(name);
@@ -66,7 +69,7 @@ int dir_recdel(const char *restrict name) {
   while ((dr = readdir(dir)) != NULL) {
     if (strcmp(dr->d_name, ".") != 0 && strcmp(dr->d_name, "..") != 0) {
       snprintf(fullpath, sizeof(fullpath), "%s/%s", name, dr->d_name);
-      if (stat(fullpath, &st) == 0) {
+      if (!stat(fullpath, &st)) {
         if (S_ISDIR(st.st_mode)) {
           dir_recdel(fullpath);
           dir_del(fullpath);
