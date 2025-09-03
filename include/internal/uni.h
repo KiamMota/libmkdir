@@ -9,6 +9,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+#include <errno.h>
 int dir_make(const char *restrict name) {
   // int len = strlen(name);
   // char _path[len + 1];
@@ -17,7 +18,12 @@ int dir_make(const char *restrict name) {
   //   memmove(&_path[len - 1], &_path[len + 1], len - 1);
   // }
 
-  return mkdir(name, 0755);
+  if (mkdir(name, 0755)) {
+    if (errno == EEXIST)
+      return 0;
+    return -1;
+  }
+  return 0;
 }
 
 char *dir_getcurrent() {
@@ -25,6 +31,35 @@ char *dir_getcurrent() {
   if (!_current_dir)
     return "noone";
   return _current_dir;
+}
+
+int dir_recmake(const char *name) {
+  char path[1024];
+  char *p;
+
+  if (!name || !*name)
+    return -1;
+
+  strncpy(path, name, sizeof(path) - 1);
+  path[sizeof(path) - 1] = '\0';
+
+  for (p = path + 1; *p; p++) {
+    if (*p == '/') {
+      *p = '\0';
+      if (mkdir(path, 0755) != 0 && errno != EEXIST) {
+        perror(path);
+        return -1;
+      }
+      *p = '/';
+    }
+  }
+
+  if (mkdir(path, 0755) != 0 && errno != EEXIST) {
+    perror(path);
+    return -1;
+  }
+
+  return 0;
 }
 
 int dir_setcurrent(const char *restrict name) { return chdir(name); }

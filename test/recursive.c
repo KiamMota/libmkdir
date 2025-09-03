@@ -3,10 +3,9 @@
 #include <stdio.h>
 
 int main() {
-  printf("starting test with recursing...\n");
-  dir_make("test/src");
-  dir_make("test/include");
-  if (dir_exists("test/src")) {
-    printf("dir created.");
+  if (dir_recmake("recursivee/src") != 0) {
+    printf("Failed to create directory.\n");
+  } else if (dir_exists("recursivee/src")) {
+    printf("dir created.\n");
   }
 }
