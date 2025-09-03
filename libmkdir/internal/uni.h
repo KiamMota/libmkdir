@@ -61,13 +61,15 @@ int dir_del(const char *restrict name) { return rmdir(name); }
 int dir_recdel(const char *restrict name) {
   if (strlen(name) <= 0)
     return -1;
+  if (dir_isempty(name)) {
+    dir_del(name);
+  }
   char fullpath[strlen(name) + 1];
   struct dirent *dr;
   struct stat st;
   DIR *dir = opendir(name);
   if (!dir)
     return -1;
-
   while ((dr = readdir(dir)) != NULL) {
     if (strcmp(dr->d_name, ".") != 0 && strcmp(dr->d_name, "..") != 0) {
       snprintf(fullpath, sizeof(fullpath), "%s/%s", name, dr->d_name);
