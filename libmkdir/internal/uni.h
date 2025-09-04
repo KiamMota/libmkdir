@@ -88,6 +88,10 @@ int dir_recdel(const char *name) {
       /* creates the charbuff fullpath (vla), that will used to all the
        * recursive operations */
       char *fullpath = malloc(strlen(name) + strlen(entry->d_name) + 2);
+      if (!fullpath) {
+        closedir(dir);
+        return -9;
+      }
       /* create string in fullpath */
       snprintf(fullpath, (strlen(name) + strlen(entry->d_name) + 2), "%s/%s",
                name, entry->d_name);
