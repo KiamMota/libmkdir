@@ -6,9 +6,9 @@
 #include "base.h"
 #include <Windows.h>
 
-int dir_make(const char *path) { return CreateDirectoryA(path, NULL) ? 0 : -1; }
+int dirmk(const char *path) { return CreateDirectoryA(path, NULL) ? 0 : -1; }
 
-int dir_recmake(const char *__restrict path) {
+static int dir_recmake(const char *__restrict path) {
   char tempPath[MAX_PATH];
   char *p = NULL;
   size_t len;

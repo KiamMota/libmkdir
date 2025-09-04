@@ -3,8 +3,10 @@
 #ifndef _UNIMKDIR_H_
 #define _UNIMKDIR_H_
 
-#include "base.h"
+#include "internal/base.h"
+#include "internal/util.h"
 #include <dirent.h>
+
 #include <sys/stat.h>
 #include <unistd.h>
 
@@ -12,22 +14,61 @@
 
 #define PERMIS_DEF 0755
 
-int dir_make(const char *name) {
+static int dir_recdel(const char *name) {
 
-  if (mkdir(name, PERMIS_DEF)) {
-    return -5;
+  /* first, check if the name is null or have any string */
+
+  if (strlen(name) <= 0)
+    return -4;
+
+  /* first check if the dir is empty before start the recurs */
+  if (!direxists(name))
+    return -1;
+  if (dirisemp(name)) {
+    return rmdir(name);
   }
-  return 0;
+
+  /* starting the entry */
+  struct dirent *entry;
+  struct stat st;
+
+  /* starting dir pointer and openning curr dir */
+  DIR *dir = opendir(name);
+
+  if (!dir)
+    return -7;
+
+  while ((entry = readdir(dir)) != NULL) {
+    /* checks if the current entry is not the current dir or other*/
+    if (strcmp(entry->d_name, ".") != 0 && strcmp(entry->d_name, "..") != 0) {
+      /* creates the charbuff fullpath (vla), that will used to all the
+       * recursive operations */
+      char *fullpath = malloc(strlen(name) + strlen(entry->d_name) + 2);
+      if (!fullpath) {
+        closedir(dir);
+        return -3;
+      }
+      /* create string in fullpath */
+      snprintf(fullpath, (strlen(name) + strlen(entry->d_name) + 2), "%s/%s",
+               name, entry->d_name);
+      if (stat(fullpath, &st) == 0) {
+        if (S_ISDIR(st.st_mode)) {
+          /* calls itself to change path */
+          dir_recdel(fullpath);
+          /* delete dir*/
+          rmdir(fullpath);
+        } else {
+          return remove(fullpath);
+        }
+      }
+      free(fullpath);
+    }
+  }
+  closedir(dir);
+  return dirrm(name);
 }
 
-char *dir_getcurrent(void) {
-  char *_current_dir = getcwd(NULL, 0);
-  if (!_current_dir)
-    return "noone";
-  return _current_dir;
-}
-
-int dir_recmake(const char *name) {
+static int dir_recmake(const char *name) {
   /* default validations */
   if (!name)
     return -1;
@@ -67,74 +108,39 @@ int dir_recmake(const char *name) {
   return 0;
 }
 
-int dir_setcurrent(const char *name) { return chdir(name); }
-
-int dir_del(const char *name) { return rmdir(name); }
-
-int dir_recdel(const char *name) {
-
-  /* first, check if the name is null or have any string */
-
-  if (strlen(name) <= 0)
-    return -4;
-
-  /* first check if the dir is empty before start the recurs */
-  if (!dir_exists(name))
-    return -1;
-  if (dir_isempty(name)) {
-    return dir_del(name);
+int dirmk(const char *name) {
+  if (havebar(name)) {
+    return dir_recmake(name);
   }
-
-  /* starting the entry */
-  struct dirent *entry;
-  struct stat st;
-
-  /* starting dir pointer and openning curr dir */
-  DIR *dir = opendir(name);
-
-  if (!dir)
-    return -7;
-
-  while ((entry = readdir(dir)) != NULL) {
-    /* checks if the current entry is not the current dir or other*/
-    if (strcmp(entry->d_name, ".") != 0 && strcmp(entry->d_name, "..") != 0) {
-      /* creates the charbuff fullpath (vla), that will used to all the
-       * recursive operations */
-      char *fullpath = malloc(strlen(name) + strlen(entry->d_name) + 2);
-      if (!fullpath) {
-        closedir(dir);
-        return -3;
-      }
-      /* create string in fullpath */
-      snprintf(fullpath, (strlen(name) + strlen(entry->d_name) + 2), "%s/%s",
-               name, entry->d_name);
-      if (stat(fullpath, &st) == 0) {
-        if (S_ISDIR(st.st_mode)) {
-          /* calls itself to change path */
-          dir_recdel(fullpath);
-          /* delete dir*/
-          dir_del(fullpath);
-        } else {
-          return remove(fullpath);
-        }
-      }
-      free(fullpath);
-    }
-  }
-  closedir(dir);
-  return dir_del(name);
+  return (mkdir(name, PERMIS_DEF));
 }
 
-int dir_move(const char *name, const char *path) { return rename(name, path); }
+int dirrm(const char *name) {
+  if (havebar(name)) {
+    return dir_recdel(name);
+  }
+  return rmdir(name);
+}
 
-int dir_exists(const char *name) {
+char *dirgetcur(void) {
+  char *_current_dir = getcwd(NULL, 0);
+  if (!_current_dir)
+    return "noone";
+  return _current_dir;
+}
+
+int dirsetcur(const char *name) { return chdir(name); }
+
+int dirmv(const char *name, const char *path) { return rename(name, path); }
+
+int direxists(const char *name) {
   struct stat exists;
   if (stat(name, &exists) != 0)
     return 0;
   return 1;
 }
 
-int dir_isempty(const char *name) {
+int dirisemp(const char *name) {
   struct dirent *dr;
   DIR *curdir = opendir(name);
   while ((dr = readdir(curdir)) != NULL) {

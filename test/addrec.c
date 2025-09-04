@@ -1,10 +1,9 @@
 #include "libmkdir.h"
 
 int main() {
-  if (!dir_recdel("myproject")) {
-    printf("deleted myproject");
+  if (!dirmk("libmkdir2/src")) {
+    printf("created!\n");
+    return -1;
   }
-  if (!dir_recmake("myproject/src")) {
-    printf("created!");
-  }
+  printf("not created.\n");
 }

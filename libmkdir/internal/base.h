@@ -7,14 +7,11 @@
 
 typedef enum LMKD_RES LMKD_RES;
 
-static int dir_make(const char *name);
-static int dir_recmake(const char *name);
-static char *dir_getcurrent(void);
-static int dir_setcurrent(const char *name);
-static int dir_recmake(const char *name);
-static int dir_exists(const char *name);
-static int dir_isempty(const char *name);
-static int dir_move(const char *name, const char *path);
-static int dir_del(const char *name);
-static int dir_recdel(const char *name);
+static int dirmk(const char *name);
+static int dirrm(const char *name);
+static int dirisemp(const char *name);
+static char *dirgetcur(void);
+static int dirsetcur(const char *name);
+static int direxists(const char *name);
+static int dirmv(const char *name, const char *path);
 #endif

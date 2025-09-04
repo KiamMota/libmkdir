@@ -4,8 +4,8 @@
 #include <string.h>
 
 int main() {
-  char *current = dir_getcurrent();
+  char *current = dirgetcur();
   printf("working in %s\n", current);
-  dir_setcurrent("..");
-  printf("now working in %s\n", dir_getcurrent());
+  dirsetcur("..");
+  printf("now working in %s\n", dirgetcur());
 }
