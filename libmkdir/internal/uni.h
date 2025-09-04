@@ -28,23 +28,34 @@ char *dir_getcurrent(void) {
 }
 
 int dir_recmake(const char *name) {
+  /* default validations */
   if (!name)
     return -1;
   if (strlen(name) <= 0)
     return -1;
 
+  /* creates pointer _name to use buffer*/
   char *_name = strdup(name);
+
+  /* pointer to traverse string */
   char *per = NULL;
+  /* assigning the pointer to point to _name */
   per = _name;
+  /* if the first index is '/', it increments one per node, otherwise, it just
+   * assigns itself. */
   per = (_name[0] == '/') ? per + 1 : per;
+
+  /* until per is not null, increment it. */
 
   for (; *per; per++) {
     if (*per == '/') {
+      /* temporarily stop the route */
       *per = 0;
       if (mkdir(_name, PERMIS_DEF) && errno != EEXIST) {
         free(_name);
         return -1;
       }
+      /* continue the route */
       *per = '/';
     }
   }

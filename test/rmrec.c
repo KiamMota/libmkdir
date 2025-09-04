@@ -1,3 +1,4 @@
+#include "internal/base.h"
 #include "libmkdir.h"
 #include <stdio.h>
 
