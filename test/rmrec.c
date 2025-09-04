@@ -21,8 +21,16 @@ void create_files() {
 }
 
 int main() {
-  create();
-  create_files();
-  printf("----- REMOVE RECURS --- \n");
-  dir_recdel("myfamily");
+  printf("testing with empty directory > rm_rec_empty\n");
+  dir_make("rm_rec_empty");
+  if (!dir_recdel("rm_rec_empty")) {
+    printf("deleted!\n");
+  }
+  printf("trying with dir with subs\n");
+  dir_recmake("rm_rec_oth/other");
+  if (!dir_recdel("rm_rec_oth")) {
+    printf("deleted!\n");
+    return 0;
+  }
+  printf("not deleted!\n");
 }

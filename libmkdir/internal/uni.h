@@ -58,25 +58,41 @@ int dir_setcurrent(const char *restrict name) { return chdir(name); }
 
 int dir_del(const char *restrict name) { return rmdir(name); }
 
-int dir_recdel(const char *restrict name) {
+int dir_recdel(const char *name) {
+
+  /* first, check if the name is null or have any string */
+
   if (strlen(name) <= 0)
-    return -1;
+    return -2;
+
+  /* first check if the dir is empty before start the recurs */
+
   if (dir_isempty(name)) {
-    dir_del(name);
+    return dir_del(name);
   }
-  char fullpath[strlen(name) + 1];
-  struct dirent *dr;
+
+  /* starting the entry */
+  struct dirent *entry;
   struct stat st;
+
+  /* starting dir pointer and openning curr dir */
   DIR *dir = opendir(name);
+
   if (!dir)
-    return -1;
-  while ((dr = readdir(dir)) != NULL) {
-    if (strcmp(dr->d_name, ".") != 0 && strcmp(dr->d_name, "..") != 0) {
-      snprintf(fullpath, sizeof(fullpath), "%s/%s", name, dr->d_name);
-      if (!stat(fullpath, &st)) {
+    return -2;
+
+  while ((entry = readdir(dir)) != NULL) {
+    /* checks if the current entry is not the current dir or other*/
+    if (strcmp(entry->d_name, ".") != 0 && strcmp(entry->d_name, "..") != 0) {
+      /* creates the charbuff fullpath (vla), that will used to all the
+       * recursive operations */
+      char fullpath[strlen(name) + strlen(entry->d_name) + 2];
+      snprintf(fullpath, sizeof(fullpath), "%s/%s", name, entry->d_name);
+      if (stat(fullpath, &st) == 0) {
         if (S_ISDIR(st.st_mode)) {
           dir_recdel(fullpath);
           dir_del(fullpath);
+          printf("eh um diretorio (%s)\n", fullpath);
         } else {
           remove(fullpath);
         }
