@@ -9,10 +9,11 @@
 #include <unistd.h>
 
 #include <errno.h>
-int dir_make(const char *restrict name) {
+
+int dir_make(const char *name) {
 
   if (mkdir(name, 0755)) {
-    return -1;
+    return -5;
   }
   return 0;
 }
@@ -26,10 +27,9 @@ char *dir_getcurrent(void) {
 
 int dir_recmake(const char *name) {
   if (!name || !*name)
-    return -1;
+    return -4;
   if (strlen(name) <= 0)
-    return -1;
-
+    return -4;
   char path[strlen(name) + 1];
   char *p;
 
@@ -47,22 +47,22 @@ int dir_recmake(const char *name) {
   }
 
   if (mkdir(path, 0755) != 0 && errno != EEXIST) {
-    return -1;
+    return -5;
   }
 
   return 0;
 }
 
-int dir_setcurrent(const char *restrict name) { return chdir(name); }
+int dir_setcurrent(const char *name) { return chdir(name); }
 
-int dir_del(const char *restrict name) { return rmdir(name); }
+int dir_del(const char *name) { return rmdir(name); }
 
 int dir_recdel(const char *name) {
 
   /* first, check if the name is null or have any string */
 
   if (strlen(name) <= 0)
-    return -2;
+    return -4;
 
   /* first check if the dir is empty before start the recurs */
 
@@ -78,7 +78,7 @@ int dir_recdel(const char *name) {
   DIR *dir = opendir(name);
 
   if (!dir)
-    return -2;
+    return -7;
 
   while ((entry = readdir(dir)) != NULL) {
     /* checks if the current entry is not the current dir or other*/
@@ -88,7 +88,7 @@ int dir_recdel(const char *name) {
       char *fullpath = malloc(strlen(name) + strlen(entry->d_name) + 2);
       if (!fullpath) {
         closedir(dir);
-        return -9;
+        return -3;
       }
       /* create string in fullpath */
       snprintf(fullpath, (strlen(name) + strlen(entry->d_name) + 2), "%s/%s",
@@ -110,18 +110,16 @@ int dir_recdel(const char *name) {
   return dir_del(name);
 }
 
-int dir_move(const char *restrict name, const char *restrict path) {
-  return rename(name, path);
-}
+int dir_move(const char *name, const char *path) { return rename(name, path); }
 
-int dir_exists(const char *restrict name) {
+int dir_exists(const char *name) {
   struct stat exists;
   if (stat(name, &exists) != 0)
     return 0;
   return 1;
 }
 
-int dir_isempty(const char *restrict name) {
+int dir_isempty(const char *name) {
   struct dirent *dr;
   DIR *curdir = opendir(name);
   while ((dr = readdir(curdir)) != NULL) {
