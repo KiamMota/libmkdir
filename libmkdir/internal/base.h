@@ -5,14 +5,14 @@
 #include <stdlib.h>
 #include <string.h>
 
-static int dir_make(const char *__restrict name);
-static int dir_recmake(const char *__restrict name);
+static int dir_make(const char *name);
+static int dir_recmake(const char *name);
 static char *dir_getcurrent(void);
-static int dir_setcurrent(const char *__restrict name);
-static int dir_recmake(const char *__restrict name);
-static int dir_exists(const char *__restrict name);
-static int dir_isempty(const char *__restrict name);
-static int dir_move(const char *__restrict name, const char *__restrict path);
-static int dir_del(const char *__restrict name);
-static int dir_recdel(const char *__restrict name);
+static int dir_setcurrent(const char *name);
+static int dir_recmake(const char *name);
+static int dir_exists(const char *name);
+static int dir_isempty(const char *name);
+static int dir_move(const char *name, const char *__restrict path);
+static int dir_del(const char *name);
+static int dir_recdel(const char *name);
 #endif
