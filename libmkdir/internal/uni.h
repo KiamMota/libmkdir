@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <string.h>
 #ifdef __unix__
 
@@ -86,20 +87,22 @@ int dir_recdel(const char *name) {
     if (strcmp(entry->d_name, ".") != 0 && strcmp(entry->d_name, "..") != 0) {
       /* creates the charbuff fullpath (vla), that will used to all the
        * recursive operations */
-      char fullpath[strlen(name) + strlen(entry->d_name) + 2];
-      snprintf(fullpath, sizeof(fullpath), "%s/%s", name, entry->d_name);
+      char *fullpath = malloc(strlen(name) + strlen(entry->d_name) + 2);
+      /* create string in fullpath */
+      snprintf(fullpath, (strlen(name) + strlen(entry->d_name) + 2), "%s/%s",
+               name, entry->d_name);
       if (stat(fullpath, &st) == 0) {
         if (S_ISDIR(st.st_mode)) {
+          /* calls itself to change path */
           dir_recdel(fullpath);
+          /* delete dir*/
           dir_del(fullpath);
-          printf("eh um diretorio (%s)\n", fullpath);
         } else {
-          remove(fullpath);
+          return remove(fullpath);
         }
       }
     }
   }
-
   closedir(dir);
   return dir_del(name);
 }
