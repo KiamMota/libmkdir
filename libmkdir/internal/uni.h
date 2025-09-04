@@ -105,6 +105,7 @@ int dir_recdel(const char *name) {
           return remove(fullpath);
         }
       }
+      free(fullpath);
     }
   }
   closedir(dir);
