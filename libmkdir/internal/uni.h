@@ -1,3 +1,7 @@
+#include <asm-generic/errno-base.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
 #ifdef __unix__
 
 #ifndef _UNIMKDIR_H_
@@ -28,30 +32,26 @@ char *dir_getcurrent(void) {
 }
 
 int dir_recmake(const char *name) {
-  if (!name || !*name)
-    return -4;
+  if (!name)
+    return -1;
   if (strlen(name) <= 0)
-    return -4;
-  char path[strlen(name) + 1];
-  char *p;
+    return -1;
 
-  strcpy(path, name);
-  path[sizeof(path) - 1] = '\0';
+  char *_name = malloc(strlen(name) + 1);
+  strcpy(_name, name);
+  char *per = NULL;
+  per = _name;
+  per = (_name[0] == '/') ? per + 1 : per;
 
-  for (p = path + 1; *p; p++) {
-    if (*p == '/') {
-      *p = '\0';
-      if (mkdir(path, PERMIS_DEF) != 0 && errno != EEXIST) {
-        return -1;
-      }
-      *p = '/';
+  for (; *per; per++) {
+    if (*per == '/') {
+      *per = 0;
+      if (mkdir(_name, PERMIS_DEF) && errno != EEXIST)
+        free(_name);
+      return -1;
+      *per = '/';
     }
   }
-
-  if (mkdir(path, PERMIS_DEF) != 0 && errno != EEXIST) {
-    return -5;
-  }
-
   return 0;
 }
 
@@ -67,7 +67,8 @@ int dir_recdel(const char *name) {
     return -4;
 
   /* first check if the dir is empty before start the recurs */
-
+  if (!dir_exists(name))
+    return -1;
   if (dir_isempty(name)) {
     return dir_del(name);
   }
