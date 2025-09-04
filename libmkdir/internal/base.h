@@ -7,8 +7,6 @@
 
 typedef enum LMKD_RES LMKD_RES;
 
-enum LMKD_RES { LMKD_PARAMERR, LMKD_MALERR, LMKD_SUCC, LMKD_SYSERR, LMKD_ };
-
 static int dir_make(const char *name);
 static int dir_recmake(const char *name);
 static char *dir_getcurrent(void);

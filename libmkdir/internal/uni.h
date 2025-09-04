@@ -10,9 +10,11 @@
 
 #include <errno.h>
 
+#define PERMIS_DEF 0755
+
 int dir_make(const char *name) {
 
-  if (mkdir(name, 0755)) {
+  if (mkdir(name, PERMIS_DEF)) {
     return -5;
   }
   return 0;
@@ -39,14 +41,14 @@ int dir_recmake(const char *name) {
   for (p = path + 1; *p; p++) {
     if (*p == '/') {
       *p = '\0';
-      if (mkdir(path, 0755) != 0 && errno != EEXIST) {
+      if (mkdir(path, PERMIS_DEF) != 0 && errno != EEXIST) {
         return -1;
       }
       *p = '/';
     }
   }
 
-  if (mkdir(path, 0755) != 0 && errno != EEXIST) {
+  if (mkdir(path, PERMIS_DEF) != 0 && errno != EEXIST) {
     return -5;
   }
 
