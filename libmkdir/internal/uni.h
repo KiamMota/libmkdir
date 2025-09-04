@@ -37,8 +37,7 @@ int dir_recmake(const char *name) {
   if (strlen(name) <= 0)
     return -1;
 
-  char *_name = malloc(strlen(name) + 1);
-  strcpy(_name, name);
+  char *_name = strdup(name);
   char *per = NULL;
   per = _name;
   per = (_name[0] == '/') ? per + 1 : per;
@@ -46,12 +45,18 @@ int dir_recmake(const char *name) {
   for (; *per; per++) {
     if (*per == '/') {
       *per = 0;
-      if (mkdir(_name, PERMIS_DEF) && errno != EEXIST)
+      if (mkdir(_name, PERMIS_DEF) && errno != EEXIST) {
         free(_name);
-      return -1;
+        return -1;
+      }
       *per = '/';
     }
   }
+  if (mkdir(_name, PERMIS_DEF) && errno != EEXIST) {
+    free(_name);
+    return -1;
+  }
+  free(_name);
   return 0;
 }
 
