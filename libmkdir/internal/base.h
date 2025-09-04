@@ -2,6 +2,7 @@
 #define _BASE_H_
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 static int dir_make(const char *__restrict name);

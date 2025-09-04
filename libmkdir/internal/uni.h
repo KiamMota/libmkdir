@@ -1,5 +1,3 @@
-#include <stdlib.h>
-#include <string.h>
 #ifdef __unix__
 
 #ifndef _UNIMKDIR_H_
