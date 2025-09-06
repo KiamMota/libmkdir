@@ -7,4 +7,4 @@ add_executable(rmrec test/rmrec.c)
 add_executable(addrec test/addrec.c )
 add_executable(move test/move.c)
 
-include_directories(libmkdir)
+include_directories(${CMAKE_SOURCE_DIR})
