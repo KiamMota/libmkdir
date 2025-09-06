@@ -1,8 +1,8 @@
 # libmkdir
 
-### The libmkdir library is a library that offers abstraction for manipulation, generation and removal of directories in cross-platform C, completely header-only.
+### The libmkdir library is a library that offers abstraction for manipulation, generation and removal of directories in cross-platform C, completely single-header.
 
-## functions 
+## functions (2.1.0)
 
 >``` c
 > static int dirmk(const char* path);
