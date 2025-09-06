@@ -1,7 +1,4 @@
-#include "internal/base.h"
 #include "libmkdir.h"
-#include <stdio.h>
-#include <string.h>
 
 int main() {
   char *current = dirgetcur();
