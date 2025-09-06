@@ -34,11 +34,9 @@ static int _havebar(const char *path) {
 #ifdef __unix__
 
 #include <dirent.h>
-
+#include <errno.h>
 #include <sys/stat.h>
 #include <unistd.h>
-
-#include <errno.h>
 
 #define PERMIS_DEF 0755
 
@@ -185,7 +183,6 @@ int dirisemp(const char *name) {
 
 #ifdef _WIN32
 
-#include "base.h"
 #include <Windows.h>
 
 int dirmk(const char *path) { return CreateDirectoryA(path, NULL) ? 0 : -1; }
