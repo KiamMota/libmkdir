@@ -9,6 +9,21 @@
 extern "C" {
 #endif
 
+typedef enum {
+  DIR_OK,
+  DIR_ERR_UNKNOWN = -7,
+  DIR_ERR_NOCLASS,
+  DIR_ERR_MEM,
+  DIR_ERR_SYSMEM,
+  DIR_ERR_INVAPARAM,
+  DIR_ERR_PERM = -9,
+  DIR_ERR_EXISTS,
+  DIR_ERR_NOEXISTS,
+  DIR_ERR_NOT_EXISTS,
+  DIR_ERR_PATH,
+  DIR_ERR_IO,
+} LDIR;
+
 int dirmk(const char *name);
 int dirrm(const char *name);
 int dirisemp(const char *name);
@@ -29,6 +44,14 @@ static int _havebar(const char *path) {
   return 0;
 }
 
+static int validate_param(const void *param) {
+  if (!param)
+    return DIR_ERR_INVAPARAM;
+  if (strlen(param) <= 0)
+    return DIR_ERR_INVAPARAM;
+  return DIR_OK;
+}
+
 /* ------------------------ UNIX --------------------- */
 
 #ifdef __unix__
@@ -44,12 +67,12 @@ static int dir_recdel(const char *name) {
 
   /* first, check if the name is null or have any string */
 
-  if (strlen(name) <= 0)
-    return -4;
+  int res = validate_param(name);
+  if (res != DIR_OK)
+    return res;
 
-  /* first check if the dir is empty before start the recurs */
   if (!direxists(name))
-    return -1;
+    return DIR_ERR_NOEXISTS;
   if (dirisemp(name)) {
     return rmdir(name);
   }
@@ -62,7 +85,7 @@ static int dir_recdel(const char *name) {
   DIR *dir = opendir(name);
 
   if (!dir)
-    return -7;
+    return DIR_ERR_SYSMEM;
 
   while ((entry = readdir(dir)) != NULL) {
     /* checks if the current entry is not the current dir or other*/
@@ -72,7 +95,7 @@ static int dir_recdel(const char *name) {
       char *fullpath = malloc(strlen(name) + strlen(entry->d_name) + 2);
       if (!fullpath) {
         closedir(dir);
-        return -3;
+        return DIR_ERR_MEM;
       }
       /* create string in fullpath */
       snprintf(fullpath, (strlen(name) + strlen(entry->d_name) + 2), "%s/%s",
@@ -96,10 +119,9 @@ static int dir_recdel(const char *name) {
 
 static int dir_recmake(const char *name) {
   /* default validations */
-  if (!name)
-    return -1;
-  if (strlen(name) <= 0)
-    return -1;
+  int ret = validate_param(name);
+  if (ret != DIR_OK)
+    return ret;
 
   /* creates pointer _name to use buffer*/
   char *_name = strdup(name);
@@ -128,10 +150,10 @@ static int dir_recmake(const char *name) {
   }
   if (mkdir(_name, PERMIS_DEF) && errno != EEXIST) {
     free(_name);
-    return -1;
+    return DIR_ERR_IO;
   }
   free(_name);
-  return 0;
+  return DIR_OK;
 }
 
 int dirmk(const char *name) {
@@ -162,8 +184,8 @@ int dirmv(const char *name, const char *path) { return rename(name, path); }
 int direxists(const char *name) {
   struct stat exists;
   if (stat(name, &exists) != 0)
-    return 0;
-  return 1;
+    return 0; /* false */
+  return 1;   /* true */
 }
 
 int dirisemp(const char *name) {
@@ -203,7 +225,7 @@ static int dir_recmake(const char *__restrict path) {
       *p = '\0';
       if (!dir_exists(tempPath)) {
         if (dir_make(tempPath) != 0) {
-          return -1;
+          return DIR_ERR_UNKNOWN;
         }
       }
       *p = '\\';
@@ -211,14 +233,10 @@ static int dir_recmake(const char *__restrict path) {
   }
   if (!dir_exists(tempPath)) {
     if (dir_make(tempPath) != 0) {
-      return -1;
+      return DIR_ERR_UNKNOWN;
     }
   }
   return 0;
-}
-
-int dir_del(const char *__restrict path) {
-  return RemoveDirectoryA(path) ? 0 : -1;
 }
 
 int dir_recdel(const char *__restrict path) {
@@ -231,7 +249,7 @@ int dir_recdel(const char *__restrict path) {
 
   hFind = FindFirstFileA(searchPath, &ffd);
   if (hFind == INVALID_HANDLE_VALUE) {
-    return -1;
+    return DIR_ERR_IO;
   }
 
   do {
@@ -243,7 +261,7 @@ int dir_recdel(const char *__restrict path) {
     if (ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
       if (dir_recdel(itemPath) != 0) {
         FindClose(hFind);
-        return -1;
+        return DIR_ERR_UNKNOWN;
       }
     } else {
       if (!DeleteFileA(itemPath)) {
