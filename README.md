@@ -5,54 +5,43 @@
 ## functions 
 
 >``` c
-> static int dir_make(const char*__restrict name);
+> static int dirmk(const char* name);
 > ```
-> Creates a directory. Returns 0 if successful.
+> Creates a directory (recursively or not). Returns 0 if successful.
 ---
 
 > ``` c
-> static int dir_recmake(const char*__restrict name);
+> static int direxists(const char* name);
 > ```
-> Creates directory recursively, returns 0 on success.
+> Checks if a directory exists (recursively or not). Returns 0 if successful.
 ---
 
 > ``` c
-> static int dir_exists(const char*__restrict name);
-> ```
-> Checks if a directory exists. Returns 1 if yes, and 0 if no.
----
-
-> ``` c
-> static int dir_isempty(const char*__restrict name);
+> static int dirisemp(const char* name);
 > ```
 > Checks whether a directory is empty or not, returning 1 or 0 respectively.
 
 > ``` c
-> static int dir_del(const char*__restrict name);
+> static int dirrm(const char* name);
 > ```
-> Removes an empty directory, returns -2 if the name pointer is invalid. Success only if 0 is returned
+> Removes an empty directory (recursively or not). Returns 0 if successful.
 ---
 
-> ``` c
-> static int dir_recdel(const char*__restrict name);
-> ```
-> removes a directory recursively, returns 0 on success.
----
 
 > ``` c
-> static int dir_move(const char*__restrict old_name, const char*__restrict new_name);
+> static int dirmv(const char* old_name, const char* new_name);
 > ```
 > Function capable of both renaming and moving a directory. Returns 0 if successful.
 ---
 
 > ``` c
-> static char* dir_getcurrent();
+> static char* dirgetcur();
 > ```
-> Returns the absolute path of the default directory.
+> Returns the absolute path of the default directory. Returns 0 if successful.
 ---
 
 > ``` c
-> static int dir_setcurrent(const char*__restrict name);
+> static int dirsetcur(const char* name);
 > ```
-> Sets the current directory of the process, returns 0 if successful.
+> Sets the current directory of the process. Returns 0 if successful.
 ---
