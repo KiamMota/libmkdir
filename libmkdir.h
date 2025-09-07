@@ -26,6 +26,7 @@ typedef enum {
 
 int dirmk(const char *name);
 int dirrm(const char *name);
+char** dirlist(const char* name);
 int dirisemp(const char *name);
 char *dirgetcur(void);
 int dirsetcur(const char *name);
@@ -168,6 +169,19 @@ int dirrm(const char *name) {
     return dir_recdel(name);
   }
   return rmdir(name);
+}
+
+char** dirlist(const char* path)
+{
+  if ret = validate_param(path);
+  if(ret != DIR_OK) return ret;
+
+  DIR* curdir = opendir(path);
+  if(!dir) return DIR_ERR_MEM;
+
+  struct dirent* entry;
+  while()
+
 }
 
 char *dirgetcur(void) {
