@@ -47,12 +47,20 @@ Creates a directory (recursively or not). Returns 0 if successful.
 ---
 
  ``` c
- void dirlistcnt(const char* path, signed long* it, short recursive);
+ void dircnt(const char* path, signed long* it, short recursive);
  ```
 Counts directories in the specified path.
 - `path`: the path to the directory to scan.
 - `it`: pointer to a signed long that will store the number of directories counted.
 - `recursive`: if non-zero, counts directories recursively; if zero, counts only the immediate subdirectories.
 ---
+
+``` c
+void dircntall(const char* path, signed long* it, short recursive)
+```
+Counts directories in the specified path and files and other logical blocks.
+- `path`: the path to the directory to scan.
+- `it`: pointer to a signed long that will store the number of directories counted.
+- `recursive`: if non-zero, counts directories recursively; if zero, counts only the immediate subdirectories.
 
 
