@@ -1,6 +1,6 @@
 ## ROADMAP to 2.1 version
 
-[ ] add dirlistcnt(); cross plat
+[x] add dirlistcnt(); cross plat
 [ ] add dirlistcntall(); cross plat
 [ ] add dirlist(); cross plat
 [ ] add dirlistall() cross plat;

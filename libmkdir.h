@@ -302,6 +302,34 @@ int dir_recmake(const char *__restrict path) {
   return 0;
 }
 
+void dirlistcnt(const char* path, signed long* it, short recursive) {
+    WIN32_FIND_DATA fd;
+    HANDLE h;
+    char search_path[MAX_PATH];
+
+    if (!it) return;
+
+    snprintf(search_path, MAX_PATH, "%s\\*", path);
+    h = FindFirstFile(search_path, &fd);
+    if (h == INVALID_HANDLE_VALUE) return;
+
+    do {
+        if (strcmp(fd.cFileName, ".") == 0 || strcmp(fd.cFileName, "..") == 0)
+            continue;
+
+        if (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+            (*it)++;
+            if (recursive)
+                // monta caminho completo para subdiretório
+                char subdir[MAX_PATH];
+                snprintf(subdir, MAX_PATH, "%s\\%s", path, fd.cFileName);
+                dirlistcnt(subdir, it, recursive);
+        }
+    } while (FindNextFile(h, &fd) != 0);
+
+    FindClose(h);
+}
+
 int dir_recdel(const char *__restrict path) {
   WIN32_FIND_DATAA ffd;
   HANDLE hFind;
