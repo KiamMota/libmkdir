@@ -435,7 +435,7 @@ static int direxists(const char *path) {
              : 0;
 }
 
-int dirisemp(const char *path) {
+static int dirisemp(const char *path) {
   WIN32_FIND_DATAA ffd;
   HANDLE hFind;
   char searchPath[MAX_PATH];
