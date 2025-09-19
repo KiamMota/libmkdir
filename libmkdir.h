@@ -192,7 +192,7 @@ static void dircnt(const char *path, signed long* count, short recursive)
   return _dir_listcnt_rec(path, count);
 }
 
-static void dircntall(const char *path, long *count, short recursive)
+static void dircntall(const char *path, signed long *count, short recursive)
 {
   /* handle pointer */
   DIR* dirp;
