@@ -1,4 +1,4 @@
-# libmkdir v2
+# libmkdir v2.1
 
 ### The libmkdir is a library that offers abstraction for manipulation, generation and removal of directories in cross-platform C, completely single-header.
 
