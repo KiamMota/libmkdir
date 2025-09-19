@@ -25,6 +25,7 @@ typedef enum {
   DIR_ERR_IO,
 } LDIR;
 
+
 static int dirmk(const char *name);
 static int dirrm(const char *name);
 static void dirlistcnt(const char *path, signed long* count, short recursive);
