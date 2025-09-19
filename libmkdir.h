@@ -24,15 +24,24 @@ typedef enum {
   DIR_ERR_IO,
 } LDIR;
 
-
+/* creates directory recursive or not */
 static int dirmk(const char *name);
+/* removes a directory recursive or not */
 static int dirrm(const char *name);
-static void dirlistcnt(const char *path, signed long* count, short recursive);
+/* checks if dir is empty */
 static int dirisemp(const char *name);
+/* gets the current directory */
 static char *dirgetcur(void);
+/* sets the current directory */
 static int dirsetcur(const char *name);
+/* checks if dir exists */
 static int direxists(const char *name);
+/* rename or move directory */
 static int dirmv(const char *name, const char *path);
+/* counts directory */
+static void dircnt(const char *path, signed long* count, short recursive);
+/* counts the directory and all */
+static void dircntall(const char* path, signed long* count, short recursive);
 
 /* utils functions */
 
@@ -155,7 +164,7 @@ void  _dir_listcnt_rec(const char* path, signed long* count)
   closedir(dirp);
 }
 
-static void dirlistcnt(const char *path, signed long* count, short recursive)
+static void dircnt(const char *path, signed long* count, short recursive)
 {
   DIR* dirp;
   struct dirent* entry;
@@ -302,7 +311,7 @@ int dir_recmake(const char *__restrict path) {
   return 0;
 }
 
-void dirlistcnt(const char* path, signed long* it, short recursive) {
+static void dircnt(const char* path, signed long* it, short recursive) {
     WIN32_FIND_DATA fd;
     HANDLE h;
     char search_path[MAX_PATH];
