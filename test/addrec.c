@@ -1,9 +1,15 @@
 #include "libmkdir.h"
+#include <stdio.h>
 
 int main() {
-  if (!dirmk("libmkdir2/src")) {
-    printf("created!\n");
-    return -1;
+  if(!dirmk("lib////lib"))
+  {
+      printf("created lib //// lib!");
+    return 0;
   }
-  printf("not created.\n");
+  if(!dirmk(".."))
+  {
+    printf("dir maked!");
+  }
+  printf("not created!");
 }

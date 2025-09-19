@@ -209,8 +209,6 @@ static void dircntall(const char *path, signed long *count, short recursive)
     }
     return;
   }
-
-
 }
 
 
@@ -362,6 +360,31 @@ static void dircnt(const char* path, signed long* it, short recursive) {
     } while (FindNextFile(h, &fd) != 0);
 
     FindClose(h);
+}
+
+static void dircntall(const char* path, signed long* it, short recursive)
+{
+  WIN32_FIND_DATA fd;
+  HANDLE hFind;
+  char searchPath[MAX_PATH];
+
+  snprintf(searchPath, MAX_PATH, "%s\\*", path);
+  hFind = FindFirstFile(searchPath, &fd);
+  if (hFind == INVALID_HANDLE_VALUE) return;
+
+  do {
+      if (strcmp(fd.cFileName, ".") != 0 && strcmp(fd.cFileName, "..") != 0) {
+          (*count)++;  
+          if (recursive && (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+              char subdir[MAX_PATH];
+              snprintf(subdir, MAX_PATH, "%s\\%s", path, fd.cFileName);
+              count_all(subdir, count, recursive);
+          }
+        }
+  } while (FindNextFile(hFind, &fd));
+
+  FindClose(hFind);
+
 }
 
 int dir_recdel(const char *__restrict path) {
