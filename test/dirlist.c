@@ -3,6 +3,7 @@
 
 int main()
 {
-  printf("diretorios em / : %d\n", dirlistcount("/"));
-  printf("dir in ~: %d \n", dirlistcount("~"));
+  signed long it = 0;
+  dirlistcnt("/",&it, 0);
+  printf("dirlist: %ld", it);
 }

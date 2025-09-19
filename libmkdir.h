@@ -27,7 +27,7 @@ typedef enum {
 
 static int dirmk(const char *name);
 static int dirrm(const char *name);
-static int dirlistcount(const char *path);
+static void dirlistcnt(const char *path, signed long* count, short recursive);
 static int dirisemp(const char *name);
 static char *dirgetcur(void);
 static int dirsetcur(const char *name);
@@ -119,26 +119,59 @@ int dir_recdel(const char *name) {
   return dirrm(name);
 }
 
-static int dirlistcount(const char *path)
+void  _dir_listcnt_rec(const char* path, signed long* count)
 {
-  int count = 0;
+  DIR* dirp;
+
+  struct dirent* entry;
+  struct stat st;
+
+  dirp = opendir(path);
+  if(!dirp) return;
+  while((entry = readdir(dirp)) != NULL)
+  {
+    if(strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
+      continue;
+
+
+    char* fpath = (char*)malloc(strlen(path) + strlen(entry->d_name) + 2);
+    if(!fpath) { closedir(dirp); return;}
+    sprintf(fpath, "%s/%s", path, entry->d_name);
+    if(stat(fpath, &st) == 0 && S_ISDIR(st.st_mode))
+    {
+        printf("dir -> %ld \n", *count);
+        (*count) ++;
+        _dir_listcnt_rec(fpath,&*count);
+    }
+    free(fpath);
+  }
+  closedir(dirp);
+}
+
+static void dirlistcnt(const char *path, signed long* count, short recursive)
+{
   DIR* dirp;
   struct dirent* entry;
   struct stat st;
 
   dirp = opendir(path);
-  if(!dirp) return 0;
-  while((entry = readdir(dirp)) != NULL)
+  if(!dirp) return;
+  if(!recursive)
   {
-    if(!stat(path, &st))
+    while((entry = readdir(dirp)) != NULL)
     {
-      if(S_ISDIR(st.st_mode)) count++;
+      if(!stat(path, &st))
+      {
+        if(S_ISDIR(st.st_mode)) (*count)++;
+      }
     }
+    closedir(dirp);
+    free(entry);
+    return;
   }
-  closedir(dirp);
-  free(entry);
-  return count;
+  return _dir_listcnt_rec(path, count);
 }
+
 
 int dir_recmake(const char *name) {
   /* default validations */
