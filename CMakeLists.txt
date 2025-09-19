@@ -1,10 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 project(libmkdir C)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-add_executable(main test/main.c)
-add_executable(rename test/rename.c)
-add_executable(rmrec test/rmrec.c)
-add_executable(addrec test/addrec.c )
-add_executable(move test/move.c)
+add_executable(dirlist test/dirlist.c)
 
 include_directories(${CMAKE_SOURCE_DIR})

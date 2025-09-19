@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/types.h>
 
 #ifdef _cplusplus
 extern "C" {
@@ -24,14 +25,14 @@ typedef enum {
   DIR_ERR_IO,
 } LDIR;
 
-int dirmk(const char *name);
-int dirrm(const char *name);
-char** dirlist(const char* name);
-int dirisemp(const char *name);
-char *dirgetcur(void);
-int dirsetcur(const char *name);
-int direxists(const char *name);
-int dirmv(const char *name, const char *path);
+static int dirmk(const char *name);
+static int dirrm(const char *name);
+static int dirlistcount(const char *path);
+static int dirisemp(const char *name);
+static char *dirgetcur(void);
+static int dirsetcur(const char *name);
+static int direxists(const char *name);
+static int dirmv(const char *name, const char *path);
 
 static int _havebar(const char *path) {
   const char *p = path;
@@ -48,7 +49,7 @@ static int _havebar(const char *path) {
 static int validate_param(const void *param) {
   if (!param)
     return DIR_ERR_INVAPARAM;
-  if (strlen(param) <= 0)
+  if (strlen((char *)param) <= 0)
     return DIR_ERR_INVAPARAM;
   return DIR_OK;
 }
@@ -64,7 +65,7 @@ static int validate_param(const void *param) {
 
 #define PERMIS_DEF 0755
 
-static int dir_recdel(const char *name) {
+int dir_recdel(const char *name) {
 
   /* first, check if the name is null or have any string */
 
@@ -93,7 +94,7 @@ static int dir_recdel(const char *name) {
     if (strcmp(entry->d_name, ".") != 0 && strcmp(entry->d_name, "..") != 0) {
       /* creates the charbuff fullpath (vla), that will used to all the
        * recursive operations */
-      char *fullpath = malloc(strlen(name) + strlen(entry->d_name) + 2);
+      char *fullpath = (char *)malloc(strlen(name) + strlen(entry->d_name) + 2);
       if (!fullpath) {
         closedir(dir);
         return DIR_ERR_MEM;
@@ -118,7 +119,28 @@ static int dir_recdel(const char *name) {
   return dirrm(name);
 }
 
-static int dir_recmake(const char *name) {
+static int dirlistcount(const char *path)
+{
+  int count = 0;
+  DIR* dirp;
+  struct dirent* entry;
+  struct stat st;
+
+  dirp = opendir(path);
+  if(!dirp) return 0;
+  while((entry = readdir(dirp)) != NULL)
+  {
+    if(!stat(path, &st))
+    {
+      if(S_ISDIR(st.st_mode)) count++;
+    }
+  }
+  closedir(dirp);
+  free(entry);
+  return count;
+}
+
+int dir_recmake(const char *name) {
   /* default validations */
   int ret = validate_param(name);
   if (ret != DIR_OK)
@@ -171,23 +193,10 @@ int dirrm(const char *name) {
   return rmdir(name);
 }
 
-char** dirlist(const char* path)
-{
-  if ret = validate_param(path);
-  if(ret != DIR_OK) return ret;
-
-  DIR* curdir = opendir(path);
-  if(!dir) return DIR_ERR_MEM;
-
-  struct dirent* entry;
-  while()
-
-}
-
 char *dirgetcur(void) {
   char *_current_dir = getcwd(NULL, 0);
   if (!_current_dir)
-    return "noone";
+    return NULL;
   return _current_dir;
 }
 
