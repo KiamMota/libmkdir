@@ -2,7 +2,7 @@
 
 [x] add dirlistcnt(); cross plat
 
-[ ] add dirlistcntall(); cross plat
+[x] add dirlistcntall(); cross plat
 
 [ ] add dirlist(); cross plat
 
