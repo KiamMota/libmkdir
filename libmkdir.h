@@ -302,9 +302,11 @@ static int dirisemp(const char *name) {
 
 #include <Windows.h>
 
-int dirmk(const char *path) { return CreateDirectoryA(path, NULL) ? 0 : -1; }
+static int dirmk(const char *path) { return CreateDirectoryA(path, NULL) ? 0 : -1; }
+static int dirrm(const char* path) { return RemoveDirectory(path); }
+/* 'private' functions  */
 
-int dir_recmake(const char *__restrict path) {
+int _dir_recmake(const char *__restrict path) {
   char tempPath[MAX_PATH];
   char *p = NULL;
   size_t len;
@@ -319,15 +321,15 @@ int dir_recmake(const char *__restrict path) {
     if (*p == '\\' || *p == '/') {
       *p = '\0';
       if (!dir_exists(tempPath)) {
-        if (dir_make(tempPath) != 0) {
+        if (dirmk(tempPath) != 0) {
           return DIR_ERR_UNKNOWN;
         }
       }
       *p = '\\';
     }
   }
-  if (!dir_exists(tempPath)) {
-    if (dir_make(tempPath) != 0) {
+  if (!direxists(tempPath)) {
+    if (dirmk(tempPath) != 0) {
       return DIR_ERR_UNKNOWN;
     }
   }
@@ -362,6 +364,7 @@ static void dircnt(const char* path, signed long* it, short recursive) {
     FindClose(h);
 }
 
+
 static void dircntall(const char* path, signed long* it, short recursive)
 {
   WIN32_FIND_DATA fd;
@@ -387,7 +390,7 @@ static void dircntall(const char* path, signed long* it, short recursive)
 
 }
 
-int dir_recdel(const char *__restrict path) {
+int _dir_recdel(const char *__restrict path) {
   WIN32_FIND_DATAA ffd;
   HANDLE hFind;
   char searchPath[MAX_PATH];
@@ -407,7 +410,7 @@ int dir_recdel(const char *__restrict path) {
     snprintf(itemPath, MAX_PATH, "%s\\%s", path, ffd.cFileName);
 
     if (ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
-      if (dir_recdel(itemPath) != 0) {
+      if (_dir_recdel(itemPath) != 0) {
         FindClose(hFind);
         return DIR_ERR_UNKNOWN;
       }
@@ -421,10 +424,10 @@ int dir_recdel(const char *__restrict path) {
 
   FindClose(hFind);
 
-  return dir_del(path);
+  return dirrm(path);
 }
 
-int dir_exists(const char *__restrict path) {
+static int direxists(const char *path) {
   DWORD dwAttrib = GetFileAttributesA(path);
   return (dwAttrib != INVALID_FILE_ATTRIBUTES &&
           (dwAttrib & FILE_ATTRIBUTE_DIRECTORY))
@@ -432,7 +435,7 @@ int dir_exists(const char *__restrict path) {
              : 0;
 }
 
-int dir_isempty(const char *__restrict path) {
+int dirisemp(const char *path) {
   WIN32_FIND_DATAA ffd;
   HANDLE hFind;
   char searchPath[MAX_PATH];
@@ -457,7 +460,7 @@ int dir_isempty(const char *__restrict path) {
   return isEmpty ? 0 : -1;
 }
 
-char *dir_getcurrent() {
+static char *dirgetcur() {
   char *buffer = (char *)malloc(MAX_PATH);
   if (GetCurrentDirectoryA(MAX_PATH, buffer)) {
     return buffer;
@@ -466,11 +469,11 @@ char *dir_getcurrent() {
   return NULL;
 }
 
-int dir_setcurrent(const char *__restrict path) {
+static int dirsetcur(const char *path) {
   return SetCurrentDirectoryA(path) ? 0 : -1;
 }
 
-int dir_move(const char *__restrict oldpath, const char *__restrict newpath) {
+int dirmv(const char *oldpath, const char *newpath) {
   return MoveFileA(oldpath, newpath) ? 0 : -1;
 }
 
