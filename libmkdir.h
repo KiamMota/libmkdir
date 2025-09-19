@@ -176,7 +176,11 @@ static void dircnt(const char *path, signed long* count, short recursive)
   {
     while((entry = readdir(dirp)) != NULL)
     {
-      if(!stat(path, &st))
+      if(strcmp(entry->d_name, "..") != 0 && strcmp(entry->d_name, "."))
+        continue;
+      char* fpath = (char*)malloc(strlen(path) + strlen(entry->d_name) + 2);
+      sprintf(fpath, "%s/%s", fpath, entry->d_name);
+      if(!stat(fpath, &st))
       {
         if(S_ISDIR(st.st_mode)) (*count)++;
       }
@@ -186,6 +190,27 @@ static void dircnt(const char *path, signed long* count, short recursive)
     return;
   }
   return _dir_listcnt_rec(path, count);
+}
+
+static void dircntall(const char *path, long *count, short recursive)
+{
+  /* handle pointer */
+  DIR* dirp;
+  struct dirent* entry;
+  struct stat st;
+
+  dirp = opendir(path);
+  if(!dirp) return;
+  if(!recursive)
+  {
+    while((entry = readdir(dirp)) != NULL)
+    {
+      (*count)++;
+    }
+    return;
+  }
+
+
 }
 
 

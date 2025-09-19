@@ -4,6 +4,9 @@
 int main()
 {
   signed long it = 0;
-  dircnt("/",&it, 1);
-  printf("dirlist: %ld", it);
+  dircnt(dirgetcur(), &it, 0);
+  printf("look just path > %ld\n", it);
+  it = 0;
+  dircntall(dirgetcur(), &it, 0);
+  printf("look all > %ld\n", it);
 }
