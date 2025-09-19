@@ -228,39 +228,39 @@ int dir_recmake(const char *name) {
   return DIR_OK;
 }
 
-int dirmk(const char *name) {
+static int dirmk(const char *name) {
   if (_havebar(name)) {
     return dir_recmake(name);
   }
   return (mkdir(name, PERMIS_DEF));
 }
 
-int dirrm(const char *name) {
+static int dirrm(const char *name) {
   if (_havebar(name)) {
     return _dir_recdel(name);
   }
   return rmdir(name);
 }
 
-char *dirgetcur(void) {
+static char *dirgetcur(void) {
   char *_current_dir = getcwd(NULL, 0);
   if (!_current_dir)
     return NULL;
   return _current_dir;
 }
 
-int dirsetcur(const char *name) { return chdir(name); }
+static int dirsetcur(const char *name) { return chdir(name); }
 
-int dirmv(const char *name, const char *path) { return rename(name, path); }
+static int dirmv(const char *name, const char *path) { return rename(name, path); }
 
-int direxists(const char *name) {
+static int direxists(const char *name) {
   struct stat exists;
   if (stat(name, &exists) != 0)
     return 0; /* false */
   return 1;   /* true */
 }
 
-int dirisemp(const char *name) {
+static int dirisemp(const char *name) {
   struct dirent *dr;
   DIR *curdir = opendir(name);
   while ((dr = readdir(curdir)) != NULL) {
