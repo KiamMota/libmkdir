@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/types.h>
 
 #ifdef _cplusplus
 extern "C" {
@@ -35,7 +34,9 @@ static int dirsetcur(const char *name);
 static int direxists(const char *name);
 static int dirmv(const char *name, const char *path);
 
-static int _havebar(const char *path) {
+/* utils functions */
+
+int _havebar(const char *path) {
   const char *p = path;
   if (path[0] == '/' || path[0] == '\\')
     p++;
@@ -47,7 +48,7 @@ static int _havebar(const char *path) {
   return 0;
 }
 
-static int validate_param(const void *param) {
+int validate_param(const void *param) {
   if (!param)
     return DIR_ERR_INVAPARAM;
   if (strlen((char *)param) <= 0)
@@ -66,9 +67,11 @@ static int validate_param(const void *param) {
 
 #define PERMIS_DEF 0755
 
-int dir_recdel(const char *name) {
+/* util function to recursively delete directory */
 
-  /* first, check if the name is null or have any string */
+int _dir_recdel(const char *name) {
+
+  /* first, checks if the name is null or have any string */
 
   int res = validate_param(name);
   if (res != DIR_OK)
@@ -80,33 +83,36 @@ int dir_recdel(const char *name) {
     return rmdir(name);
   }
 
-  /* starting the entry */
-  struct dirent *entry;
-  struct stat st;
+  /* pointer handle to the current directory */
 
-  /* starting dir pointer and openning curr dir */
   DIR *dir = opendir(name);
-
+  
   if (!dir)
     return DIR_ERR_SYSMEM;
+  
+  /* starting the entry */
+  struct dirent *entry;
+  /* handle to get description about the block*/
+  struct stat st;
 
   while ((entry = readdir(dir)) != NULL) {
     /* checks if the current entry is not the current dir or other*/
     if (strcmp(entry->d_name, ".") != 0 && strcmp(entry->d_name, "..") != 0) {
-      /* creates the charbuff fullpath (vla), that will used to all the
-       * recursive operations */
+      
+      /* creates fullpath that represents the current directory to future recursive calls */
       char *fullpath = (char *)malloc(strlen(name) + strlen(entry->d_name) + 2);
       if (!fullpath) {
         closedir(dir);
         return DIR_ERR_MEM;
       }
       /* create string in fullpath */
-      snprintf(fullpath, (strlen(name) + strlen(entry->d_name) + 2), "%s/%s",
-               name, entry->d_name);
+
+      sprintf(fullpath, "%s/%s", name, entry->d_name);
+      /* get the props of the current path */ 
       if (stat(fullpath, &st) == 0) {
         if (S_ISDIR(st.st_mode)) {
           /* calls itself to change path */
-          dir_recdel(fullpath);
+          _dir_recdel(fullpath);
           /* delete dir*/
           rmdir(fullpath);
         } else {
@@ -222,7 +228,7 @@ int dirmk(const char *name) {
 
 int dirrm(const char *name) {
   if (_havebar(name)) {
-    return dir_recdel(name);
+    return _dir_recdel(name);
   }
   return rmdir(name);
 }
@@ -266,7 +272,7 @@ int dirisemp(const char *name) {
 
 int dirmk(const char *path) { return CreateDirectoryA(path, NULL) ? 0 : -1; }
 
-static int dir_recmake(const char *__restrict path) {
+int dir_recmake(const char *__restrict path) {
   char tempPath[MAX_PATH];
   char *p = NULL;
   size_t len;

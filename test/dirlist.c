@@ -4,6 +4,6 @@
 int main()
 {
   signed long it = 0;
-  dirlistcnt("/",&it, 0);
+  dirlistcnt("/",&it, 1);
   printf("dirlist: %ld", it);
 }
