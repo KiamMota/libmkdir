@@ -1,4 +1,4 @@
-# libmkdir
+# libmkdir v2
 
 ### The libmkdir library is a library that offers abstraction for manipulation, generation and removal of directories in cross-platform C, completely header-only.
 
@@ -45,3 +45,14 @@
 > ```
 > Sets the current directory of the process. Returns 0 if successful.
 ---
+
+> ``` c
+> void dirlistcnt(const char* path, signed long* it, short recursive);
+> ```
+Counts directories in the specified path.
+- `path`: the path to the directory to scan.
+- `it`: pointer to a signed long that will store the number of directories counted.
+- `recursive`: if non-zero, counts directories recursively; if zero, counts only the immediate subdirectories.
+---
+
+
